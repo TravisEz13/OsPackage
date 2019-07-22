@@ -98,7 +98,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('PSEdition_Core','Linux','MacOS')
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/TravisEz13/OsPackage/blob/master/LICENSE'
