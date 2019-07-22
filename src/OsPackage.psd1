@@ -12,10 +12,10 @@
 RootModule = 'OsPackage.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.1'
+ModuleVersion = '1.0.0'
 
 # Supported PSEditions
-# CompatiblePSEditions = @()
+CompatiblePSEditions = @('Core')
 
 # ID used to uniquely identify this module
 GUID = '61c80468-693c-4c05-bf7a-df961727d07d'
@@ -30,10 +30,10 @@ CompanyName = 'Travis Plunk'
 Copyright = '(c) Travis Plunk. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'Allows getting, updating and installing packages with Operating System package managers like brew, apt-get, and yum.'
 
 # Minimum version of the PowerShell engine required by this module
-# PowerShellVersion = ''
+PowerShellVersion = '6.1'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -101,10 +101,10 @@ PrivateData = @{
         # Tags = @()
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/TravisEz13/OsPackage/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/TravisEz13/OsPackage'
 
         # A URL to an icon representing this module.
         # IconUri = ''
@@ -113,7 +113,7 @@ PrivateData = @{
         # ReleaseNotes = ''
 
         # Prerelease string of this module
-        # Prerelease = ''
+        Prerelease = 'preview.1'
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update/save
         RequireLicenseAcceptance = $true

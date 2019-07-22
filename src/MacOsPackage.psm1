@@ -14,17 +14,18 @@ function Find-MacOsPackage
     $results = Start-NativeExecution -ScriptBlock {
             brew search $Filter  2> $null
         } -IgnoreExitcode
-    $type=$null
+
+    $type = $null
     $results | ForEach-Object {
         if($_ -like '==>*')
         {
             switch ($_)
             {
                 '==> Casks'{
-                    $type=$Script:CaskName
+                    $type = $Script:CaskName
                 }
                 '==> Formulae'{
-                    $type=$Script:FormulaName
+                    $type = $Script:FormulaName
                 }
             }
         }
@@ -53,7 +54,7 @@ function Get-MacOsPackage
 function Get-MacOsPackageFormulae
 {
     brew list --full-name --versions -1  2> $null | ForEach-Object {
-        $name,$version=$_ -split ' '
+        $name , $version = $_ -split ' '
         [MacOsPackage]@{
             Name = $name
             Version = $version
@@ -65,7 +66,7 @@ function Get-MacOsPackageFormulae
 function Get-MacOsPackageCask
 {
     brew cask list -1  2> $null | ForEach-Object {
-        $name=$_
+        $name = $_
         Write-Verbose "getting version info for $name ..."
         $version = Get-MacOsCaskVersion -Name $name
         Write-Verbose "creating object for for $name ..."
@@ -104,7 +105,7 @@ Function Get-MacOsCaskVersion
         [string]$Name
     )
     $info = brew cask info $name  2> $null
-    $null,$details = $info[0] -split ': '
+    $null, $details = $info[0] -split ': '
     $version,$updateInfo = $details -split '[ \(\)]{1,2}'
     Write-Verbose "v:$version; ui:$updateInfo"
     return $version
@@ -117,8 +118,8 @@ Function Get-MacOsFormulaeVersion
     )
 
     $info = brew info $name 2> $null
-    $null,$details = $info[0] -split ': '
-    $channel,$version,$type=$details -split '[ ,\(\)\[\]]{1,3}'
+    $null, $details = $info[0] -split ': '
+    $channel, $version, $type = $details -split '[ ,\(\)\[\]]{1,3}'
     Write-Verbose "c:$channel; v:$version; t:$type"
     return $version
 }
