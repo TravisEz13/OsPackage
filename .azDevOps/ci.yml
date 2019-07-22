@@ -1,0 +1,32 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'macOS-10.14'
+
+steps:
+- pwsh: |
+    Install-module pester -Scope CurrentUser -Force
+  displayName: 'Install Pester'
+  continueOnError: true
+
+- pwsh: |
+    Import-Module ./src/OsPackage.psd1 -Force -Verbose
+    Invoke-Pester -Path ./test -OutputFormat NUnitXml -OutputFile ./test-results.xml
+  displayName: Test
+  condition: succeeded()
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  displayName: Publish Test Results **\test*.xml
+  inputs:
+    testRunner: NUnit
+    testResultsFiles: '**\test*.xml'
+    testRunTitle: nanoserver
+    mergeTestResults: true
+    failTaskOnFailedTests: true
