@@ -18,6 +18,9 @@ stages:
     displayName: Build Package
     steps:
     - pwsh: |
+        dir /src/* -Recurse
+      displayName: capture sources
+    - pwsh: |
         Install-Module -Name "platyPS","Pester" -Force
       displayName: Install dependencies
     - pwsh: |
