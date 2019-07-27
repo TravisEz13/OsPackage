@@ -1,7 +1,7 @@
 # Copyright (c) Travis Plunk. All rights reserved.
 # Licensed under the MIT License.
 
-Describe 'Find-OsPackage' {
+Describe 'Find-OsPackage' -Tag 'CI' {
     it 'Should find powershell cask' {
         $results = Find-OsPackage -Filter powershell
         $results.Count | Should -BeGreaterOrEqual 1

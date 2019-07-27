@@ -1,0 +1,25 @@
+parameters:
+  jobName: TestPkgWin
+  imageName: windows-2019
+  displayName: PowerShell Core on Windows
+  powershellExecutable: pwsh
+
+jobs:
+- job: ${{ parameters.jobName }}
+  pool:
+    vmImage: ${{ parameters.imageName }}
+  displayName: ${{ parameters.displayName }}
+  steps:
+  - ${{ parameters.powershellExecutable }}: |
+      Install-Module -Name "PSScriptAnalyzer","platyPS","Pester" -Force
+    displayName: Install dependencies
+  - ${{ parameters.powershellExecutable }}: |
+      Install-Module -Name PSPackageProject -Force
+    displayName: Install PSPackageProject module
+  - ${{ parameters.powershellExecutable }}: |
+      Invoke-PSPackageProjectTest -Type Functional
+    displayName: Execute functional tests
+  - ${{ parameters.powershellExecutable }}: |
+      Invoke-PSPackageProjectTest -Type StaticAnalysis
+    displayName: Execute static analysis tests
+    continueOnError: true
