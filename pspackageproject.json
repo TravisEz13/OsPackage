@@ -1,0 +1,7 @@
+{
+  "SourcePath": "src",
+  "ModuleName": "OSPackage",
+  "BuildOutputPath": "out",
+  "HelpPath": "help",
+  "TestPath": "test"
+}
