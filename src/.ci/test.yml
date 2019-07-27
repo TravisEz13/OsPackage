@@ -47,6 +47,7 @@ jobs:
   - ${{ parameters.powershellExecutable }}: |
       Invoke-PSPackageProjectTest -Type StaticAnalysis
     displayName: Execute static analysis tests
+    continueOnError: true
 
   - ${{ parameters.powershellExecutable }}: |
       Unregister-PSRepository -Name 'pspackageproject-local-repo' -ErrorAction Ignore

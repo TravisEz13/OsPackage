@@ -38,24 +38,17 @@ stages:
 - stage: Test
   displayName: Test Package
   jobs:
-  - template: test.yml
-    parameters:
-      jobName: TestPkgWin
-      displayName: PowerShell Core on Windows
-      imageName: windows-2019
+  # - template: test.yml
+  #   parameters:
+  #     jobName: TestPkgWin
+  #     displayName: PowerShell Core on Windows
+  #     imageName: windows-2019
 
-  - template: test.yml
-    parameters:
-      jobName: TestPkgWinPS
-      displayName: Windows PowerShell on Windows
-      imageName: windows-2019
-      powershellExecutable: powershell
-
-  - template: test.yml
-    parameters:
-      jobName: TestPkgUbuntu16
-      displayName: PowerShell Core on Ubuntu 16.04
-      imageName: ubuntu-16.04
+  # - template: test.yml
+  #   parameters:
+  #     jobName: TestPkgUbuntu16
+  #     displayName: PowerShell Core on Ubuntu 16.04
+  #     imageName: ubuntu-16.04
 
   - template: test.yml
     parameters:
