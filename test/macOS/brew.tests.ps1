@@ -84,15 +84,17 @@ Describe 'Install-OsPackage' -Tag 'CI' {
 
             [String]$Type,
 
-            [bool]$Not
+            [switch]$Not
         )
         switch ($Type) {
             "Cask" {
                 $test = { Test-Path -Path $Command }
             }
+
             "Formula" {
                 $test = { Get-Command -Name $Command -ErrorAction Ignore -ne $null }
             }
+
             default {
                 throw "unknown command type $Type"
             }
