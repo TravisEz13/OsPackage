@@ -80,7 +80,8 @@ Describe 'Install-OsPackage' -Tag 'CI' {
             [string]$Name,
 
             [parameter(Mandatory)]
-            [string]$Command
+            [string]$Command,
+            [String]$Type
         )
         Get-Command -Name $Command -ErrorAction Ignore | Should -BeNullOrEmpty
         Install-OsPackage -Name $Name
