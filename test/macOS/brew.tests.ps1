@@ -123,7 +123,12 @@ Describe 'Install-OsPackage' -Tag 'CI' {
             $extraArgs += @{Type=$Type}
         }
 
-        Install-OsPackage -Name $Name @extraArgs
+        # also verify that we can pipe a PSObject to Install-OsPackage
+        Find-OsPackage -Name $Name |
+            Where-Object {$_.Name -eq $Name -and $_.Type -eq $Type} |
+                Select-Object @{l=’Name’;e={$_.Name}},@{l=’Type’;e={$_.Type}} |
+                    Install-OsPackage -Name $Name @extraArgs -Confirm:$false
+
         VerifyCommand @PSBoundParameters
     }
 }
