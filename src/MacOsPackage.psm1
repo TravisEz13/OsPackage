@@ -74,12 +74,14 @@ function Install-MacOsPackage
 {
     param(
         [parameter(Mandatory)]
-        [string[]] $Name
+        [string[]] $Name,
+        [string]$Type
     )
 
     foreach($packageName in $Name)
     {
-        $package = @(Find-MacOsPackage -Filter $packageName | Where-Object {$_.Name -eq $packageName})
+        $package = @(Find-MacOsPackage -Filter $packageName | Where-Object {$_.Name -eq $packageName} | Where-Object {-not $Type -or $_.Type -eq $Type})
+
         if($package.Count -ne 1)
         {
             throw "Error installing $packageName, expected to find 1 package and found $($package.Count)"

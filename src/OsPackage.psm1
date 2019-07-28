@@ -22,7 +22,8 @@ function Install-OsPackage
 {
     param(
         [parameter(Mandatory)]
-        [string[]] $Name
+        [string[]] $Name,
+        [string] $Type
     )
 
     if($IsMacOS)

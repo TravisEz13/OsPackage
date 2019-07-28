@@ -104,7 +104,7 @@ Describe 'Install-OsPackage' -Tag 'CI' {
             & $Test | Should -BeFalse -Because "$Name should not be installed"
         }
         else {
-            & $Test | Should -BeFalse -Because "$Name should be installed"
+            & $Test | Should -BeTrue -Because "$Name should be installed"
         }
     }
     it "Should install the <Name> <Type>" -TestCases $testCases {
@@ -117,7 +117,13 @@ Describe 'Install-OsPackage' -Tag 'CI' {
             [String]$Type
         )
         VerifyCommand @PSBoundParameters -Not
-        Install-OsPackage -Name $Name
+        $extraArgs = @{}
+        if($Type -ne 'Formula')
+        {
+            $extraArgs += @{Type=$Type}
+        }
+
+        Install-OsPackage -Name $Name @extraArgs
         VerifyCommand @PSBoundParameters
     }
 }
