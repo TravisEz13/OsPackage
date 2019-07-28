@@ -60,14 +60,30 @@ Describe 'Get-OsPackage' -Tag 'CI' {
 }
 
 Describe 'Install-OsPackage' -Tag 'CI' {
-    it "Should install the jq formula" {
-        Get-Command -Name 'jq' -ErrorAction Ignore | Should -BeNullOrEmpty
-        Install-OsPackage -Name 'jq'
-        Get-Command -Name 'jq' -ErrorAction Ignore | Should -Not -BeNullOrEmpty
+    BeforeAll {
+        $testCases = @(
+            @{
+                Type='formula'
+                Name='htop'
+                Command='htop'
+            }
+            @{
+                Type='cask'
+                Name='beyond-compare'
+                Command='bcomp'
+            }
+        )
     }
-    it "Should install the multipass cask" {
-        Get-Command -Name 'multipass' -ErrorAction Ignore | Should -BeNullOrEmpty
-        Install-OsPackage -Name 'multipass'
-        Get-Command -Name 'multipass' -ErrorAction Ignore | Should -Not -BeNullOrEmpty
+    it "Should install the <Name> <Type>" -TestCases $testCases {
+        param(
+            [parameter(Mandatory)]
+            [string]$Name,
+
+            [parameter(Mandatory)]
+            [string]$Command
+        )
+        Get-Command -Name $Command -ErrorAction Ignore | Should -BeNullOrEmpty
+        Install-OsPackage -Name $Name
+        Get-Command -Name $Command -ErrorAction Ignore | Should -Not -BeNullOrEmpty
     }
 }
