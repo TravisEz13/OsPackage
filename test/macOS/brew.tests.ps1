@@ -117,17 +117,12 @@ Describe 'Install-OsPackage' -Tag 'CI' {
             [String]$Type
         )
         VerifyCommand @PSBoundParameters -Not
-        $extraArgs = @{}
-        if($Type -ne 'Formula')
-        {
-            $extraArgs += @{Type=$Type}
-        }
 
         # also verify that we can pipe a PSObject to Install-OsPackage
         Find-OsPackage -Filter $Name |
             Where-Object {$_.Name -eq $Name -and $_.Type -eq $Type} |
                 Select-Object @{l=’Name’;e={$_.Name}},@{l=’Type’;e={$_.Type}} |
-                    Install-OsPackage -Name $Name @extraArgs -Confirm:$false
+                    Install-OsPackage -Confirm:$false
 
         VerifyCommand @PSBoundParameters
     }
