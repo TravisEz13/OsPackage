@@ -24,7 +24,7 @@ function Install-OsPackage
     param(
         [parameter(Mandatory,ValueFromPipelineByPropertyName)]
         [string] $Name,
-        [parameter(Mandatory,ValueFromPipelineByPropertyName)]
+        [parameter(ValueFromPipelineByPropertyName)]
         [string] $Type
     )
 
@@ -32,7 +32,12 @@ function Install-OsPackage
         if ($PSCmdlet.ShouldProcess($Name, "Install")) {
             if($IsMacOS)
             {
-                    Install-MacOsPackage @PSBoundParameters
+                $macParams = @{
+                    Name=$Name
+                    Type=$Type
+                }
+
+                Install-MacOsPackage @macParams
             }
             else
             {
