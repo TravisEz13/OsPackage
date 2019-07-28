@@ -63,16 +63,47 @@ Describe 'Install-OsPackage' -Tag 'CI' {
     BeforeAll {
         $testCases = @(
             @{
-                Type='formula'
+                Type='Formula'
                 Name='htop'
                 Command='htop'
             }
             @{
-                Type='cask'
-                Name='beyond-compare'
-                Command='bcomp'
+                Type='Cask'
+                Name='dosbox'
+                Command='/Applications/DOSBox.app'
             }
         )
+    }
+    function VerifyCommand {
+        param(
+            [parameter(Mandatory)]
+            [string]$Name,
+
+            [parameter(Mandatory)]
+            [string]$Command,
+
+            [String]$Type,
+
+            [bool]$Not
+        )
+        switch ($Type) {
+            "Cask" {
+                $test = { Test-Path -Path $Command }
+            }
+            "Formula" {
+                $test = { Get-Command -Name $Command -ErrorAction Ignore -ne $null }
+            }
+            default {
+                throw "unknown command type $Type"
+            }
+        }
+
+        if ($Not.IsPresent) {
+            & $Test | Should -BeFalse -Because "$Name should not be installed"
+        }
+        else {
+            & $Test | Should -BeFalse -Because "$Name should be installed"
+        }
     }
     it "Should install the <Name> <Type>" -TestCases $testCases {
         param(
@@ -83,8 +114,8 @@ Describe 'Install-OsPackage' -Tag 'CI' {
             [string]$Command,
             [String]$Type
         )
-        Get-Command -Name $Command -ErrorAction Ignore | Should -BeNullOrEmpty
+        VerifyCommand @PSBoundParameters -Not
         Install-OsPackage -Name $Name
-        Get-Command -Name $Command -ErrorAction Ignore | Should -Not -BeNullOrEmpty
+        VerifyCommand @PSBoundParameters
     }
 }
