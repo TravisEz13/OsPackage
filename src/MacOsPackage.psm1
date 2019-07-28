@@ -27,6 +27,9 @@ function Find-MacOsPackage
                 '==> Formulae'{
                     $type = $Script:FormulaName
                 }
+                default {
+                    throw "unknown package type header: $_"
+                }
             }
         }
         elseif($_ -and $type)
@@ -36,10 +39,26 @@ function Find-MacOsPackage
             {
                 $version = Get-MacOsPackageVersion -Name $_ -Type $type
             }
-            [MacOsPackage]@{
-                Name = $_
-                Type = $type
-                Version = $version
+            $name = $_
+            switch($type)
+            {
+                $Script:CaskName {
+                    [MacOsCaskPackage]@{
+                        Name = $name
+                        Type = $type
+                        Version = $version
+                    }
+                }
+                $Script:FormulaName {
+                    [MacOsFormulaPackage]@{
+                        Name = $name
+                        Type = $type
+                        Version = $version
+                    }
+                }
+                default {
+                    throw "unknown package type: $type"
+                }
             }
         }
     }
@@ -51,11 +70,59 @@ function Get-MacOsPackage
     Get-MacOsPackageCask
 }
 
+function Install-MacOsPackage
+{
+    param(
+        [parameter(Mandatory)]
+        [string[]] $Name
+    )
+
+    foreach($packageName in $Name)
+    {
+        $package = @(Find-MacOsPackage -Filter $packageName | Where-Object {$_.Name -eq $packageName})
+        if($package.Count -ne 1)
+        {
+            throw "Error installing $packageName, expected to find 1 package and found $($package.Count)"
+        }
+
+        switch($package.Type)
+        {
+            "Formula" {
+                Install-MacOsPackageFormula -Package $package[0]
+            }
+            "Cask" {
+                Install-MacOsPackageCask -Package $package[0]
+            }
+        }
+    }
+}
+
+function Install-MacOsPackageFormula
+{
+    param(
+        [parameter(Mandatory)]
+        [MacOsFormulaPackage] $Package
+    )
+
+    brew install $Package.Name
+}
+
+function Install-MacOsPackageCask
+{
+    param(
+        [parameter(Mandatory)]
+        [MacOsCaskPackage] $Package
+    )
+
+    brew cask install $Package.Name --quiet
+}
+
+
 function Get-MacOsPackageFormulae
 {
     brew list --full-name --versions -1  2> $null | ForEach-Object {
         $name , $version = $_ -split ' '
-        [MacOsPackage]@{
+        [MacOsFormulaPackage]@{
             Name = $name
             Version = $version
             Type = $Script:FormulaName
@@ -70,7 +137,7 @@ function Get-MacOsPackageCask
         Write-Verbose -Message "getting version info for $name ..."
         $version = Get-MacOsCaskVersion -Name $name
         Write-Verbose -Message "creating object for for $name ..."
-        [MacOsPackage]@{
+        [MacOsCaskPackage]@{
             Name = $name
             Version = $version
             Type = $Script:CaskName
@@ -179,4 +246,5 @@ function Start-NativeExecution
 Export-ModuleMember -function @(
     'Find-MacOsPackage'
     'Get-MacOsPackage'
+    'Install-MacOsPackage'
 )

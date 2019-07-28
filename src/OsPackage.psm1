@@ -18,6 +18,23 @@ function Find-OsPackage
     }
 }
 
+function Install-OsPackage
+{
+    param(
+        [parameter(Mandatory)]
+        [string[]] $Name
+    )
+
+    if($IsMacOS)
+    {
+        Install-MacOsPackage @PSBoundParameters
+    }
+    else
+    {
+        throw "Unsuported Platform"
+    }
+}
+
 function Get-OsPackage
 {
     if($IsMacOS)
@@ -49,4 +66,5 @@ Import-NestedModules
 Export-ModuleMember -function @(
     'Find-OsPackage'
     'Get-OsPackage'
+    'Install-OsPackage'
 )
