@@ -69,8 +69,8 @@ Describe 'Install-OsPackage' -Tag 'CI' {
             }
             @{
                 Type='Cask'
-                Name='powershell-preview'
-                Command='pwsh-preview'
+                Name='dosbox'
+                Command='/Applications/DOSBox.app'
             }
         )
     }
@@ -88,7 +88,7 @@ Describe 'Install-OsPackage' -Tag 'CI' {
         )
         switch ($Type) {
             "Cask" {
-                $test = { $null -ne (Get-Command -Name $Command -ErrorAction Ignore) }
+                $test = { Test-Path -Path $Command }
             }
 
             "Formula" {

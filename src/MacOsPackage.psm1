@@ -116,7 +116,7 @@ function Install-MacOsPackageCask
         [MacOsCaskPackage] $Package
     )
 
-    brew cask install $Package.Name --quiet
+    brew cask install $Package.Name
 }
 
 
