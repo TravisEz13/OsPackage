@@ -6,6 +6,7 @@ Describe 'Find-OsPackage' -Tag 'CI' {
         $results = Find-OsPackage -Filter powershell
         $results.Count | Should -BeGreaterOrEqual 1
         foreach ($result in $results) {
+            $result.GetType().FullName | Should -Be 'MacOsCaskPackage'
             $result.Name | Should -BeLike '*powershell*'
             $result.Version | Should -BeNullOrEmpty
             $result.Type | Should -BeExactly 'Cask'
@@ -22,6 +23,7 @@ Describe 'Find-OsPackage' -Tag 'CI' {
         $results = Find-OsPackage -Filter cmake
         $results.Count | Should -BeGreaterOrEqual 1
         foreach ($result in $results) {
+            $result.GetType().FullName | Should -Match 'MacOs(Formula|Cask)Package'
             $result.Name | Should -BeLike '*cmake*'
             $result.Version | Should -BeNullOrEmpty
         }
@@ -36,7 +38,7 @@ Describe 'Find-OsPackage' -Tag 'CI' {
     }
 }
 
-Describe 'Get-OsPackage' {
+Describe 'Get-OsPackage' -Tag 'CI' {
     BeforeAll {
         $packageList = Get-OsPackage
     }
@@ -44,6 +46,7 @@ Describe 'Get-OsPackage' {
         $formula = $packageList | Where-Object {$_.Type -eq 'Formula'}
         $formula.Count | Should -BeGreaterOrEqual 1
         foreach ($result in $formula) {
+            $result.GetType().FullName | Should -Be 'MacOsFormulaPackage'
             $result.Type | Should -BeExactly "Formula"
             $result.Version | Should -Not -BeNullOrEmpty
         }
@@ -53,5 +56,74 @@ Describe 'Get-OsPackage' {
         $powershell.Count | Should -Be 1
         $powershell.Type | Should -BeExactly "Cask"
         $powershell.Version | Should -Match '\d+.\d+.\d+'
+    }
+}
+
+Describe 'Install-OsPackage' -Tag 'CI' {
+    BeforeAll {
+        $testCases = @(
+            @{
+                Type='Formula'
+                Name='htop'
+                Command='htop'
+            }
+            @{
+                Type='Cask'
+                Name='dosbox'
+                Command='/Applications/DOSBox.app'
+            }
+        )
+    }
+    function VerifyCommand {
+        param(
+            [parameter(Mandatory)]
+            [string]$Name,
+
+            [parameter(Mandatory)]
+            [string]$Command,
+
+            [String]$Type,
+
+            [switch]$Not
+        )
+        switch ($Type) {
+            "Cask" {
+                $test = { Test-Path -Path $Command }
+            }
+
+            "Formula" {
+                $test = { $null -ne (Get-Command -Name $Command -ErrorAction Ignore) }
+            }
+
+            default {
+                throw "unknown command type $Type"
+            }
+        }
+
+        if ($Not.IsPresent) {
+            & $Test | Should -BeFalse -Because "$Name should not be installed"
+        }
+        else {
+            & $Test | Should -BeTrue -Because "$Name should be installed"
+        }
+    }
+    it "Should install the <Name> <Type>" -TestCases $testCases {
+        param(
+            [parameter(Mandatory)]
+            [string]$Name,
+
+            [parameter(Mandatory)]
+            [string]$Command,
+            [String]$Type
+        )
+        VerifyCommand @PSBoundParameters -Not
+        $extraArgs = @{}
+        if($Type -ne 'Formula')
+        {
+            $extraArgs += @{Type=$Type}
+        }
+
+        Install-OsPackage -Name $Name @extraArgs
+        VerifyCommand @PSBoundParameters
     }
 }

@@ -9,3 +9,11 @@ Class OsPackage
 Class MacOsPackage:OsPackage
 {
 }
+
+Class MacOsCaskPackage:MacOsPackage
+{
+}
+
+Class MacOsFormulaPackage:MacOsPackage
+{
+}
