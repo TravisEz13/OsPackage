@@ -92,7 +92,7 @@ Describe 'Install-OsPackage' -Tag 'CI' {
             }
 
             "Formula" {
-                $test = { Get-Command -Name $Command -ErrorAction Ignore -ne $null }
+                $test = { $null -ne (Get-Command -Name $Command -ErrorAction Ignore) }
             }
 
             default {
