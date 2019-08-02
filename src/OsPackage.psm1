@@ -20,19 +20,30 @@ function Find-OsPackage
 
 function Install-OsPackage
 {
+    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="Medium")]
     param(
-        [parameter(Mandatory)]
-        [string[]] $Name,
+        [parameter(Mandatory,ValueFromPipelineByPropertyName)]
+        [string] $Name,
+        [parameter(ValueFromPipelineByPropertyName)]
         [string] $Type
     )
 
-    if($IsMacOS)
-    {
-        Install-MacOsPackage @PSBoundParameters
-    }
-    else
-    {
-        throw "Unsuported Platform"
+    Process {
+        if ($PSCmdlet.ShouldProcess($Name, "Install")) {
+            if($IsMacOS)
+            {
+                $macParams = @{
+                    Name=$Name
+                    Type=$Type
+                }
+
+                Install-MacOsPackage @macParams
+            }
+            else
+            {
+                throw "Unsuported Platform"
+            }
+        }
     }
 }
 
